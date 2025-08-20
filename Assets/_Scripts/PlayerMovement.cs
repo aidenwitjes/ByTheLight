@@ -86,7 +86,7 @@ public class PlayerMovement : MonoBehaviour
     private void HandleJumping()
     {
         // Can only jump if: have jump buffer, have coyote time, and not already jumping/moving up
-        if (jumpBufferCounter > 0f && coyoteTimeCounter > 0f && !hasJumped && rb.linearVelocity.y <= 0.1f)
+        if (jumpBufferCounter > 0f && coyoteTimeCounter > 0f && !hasJumped)
         {
             Jump();
             jumpBufferCounter = 0f;
@@ -118,7 +118,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleCoyoteTime()
     {
-        if (isGrounded)
+        if (isGrounded && rb.linearVelocity.y <= 0.1f)
         {
             coyoteTimeCounter = coyoteTime;
             hasJumped = false;
