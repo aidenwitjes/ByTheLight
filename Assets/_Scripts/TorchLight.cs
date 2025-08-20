@@ -11,33 +11,50 @@ public class TorchLight : MonoBehaviour
     [Header("Flame Flicker Settings")]
     [SerializeField] private float intensityBase = 1f;
     [SerializeField] private float intensityVariation = 0.2f;
-    [SerializeField] private float intensitySpeed = 2f;
+    [SerializeField] private float flickerSpeed = 2f;
 
-    // Seed for randomizing the flicker pattern
+    [Header("Light Radius Settings")]
+    [SerializeField] private float radiusBase = 5f;
+    [SerializeField] private float radiusVariation = 0.5f;
+
+    [Header("Fade Settings")]
+    [SerializeField] private float fadeSpeed = 3f; // units per second
+
+    [Header("Interaction")]
+    [SerializeField] private KeyCode interactKey = KeyCode.E;
+
+    private bool playerInRange = false;
     private float noiseSeed;
+    private float targetIntensity = 0f;
+    private float targetRadius = 0f;
 
     private void Awake()
     {
         if (torchLight == null)
             torchLight = GetComponentInChildren<Light2D>();
-
         if (animator == null)
             animator = GetComponent<Animator>();
 
-        // Assign a random seed for the Perlin noise to make each torch flicker differently
         noiseSeed = Random.Range(0f, 100f);
-
-        UpdateTorchState(); // Set the correct state on start
+        UpdateTorchState();
     }
 
     private void Update()
     {
-        // Example toggle input
-        if (Input.GetKeyDown(KeyCode.E))
+        if (playerInRange && Input.GetKeyDown(interactKey))
         {
             ToggleTorch();
         }
 
+        // Linear fade toward target values
+        if (torchLight != null)
+        {
+            // Linear interpolation for consistent speed
+            torchLight.intensity = Mathf.MoveTowards(torchLight.intensity, targetIntensity, Time.deltaTime * fadeSpeed);
+            torchLight.pointLightOuterRadius = Mathf.MoveTowards(torchLight.pointLightOuterRadius, targetRadius, Time.deltaTime * fadeSpeed);
+        }
+
+        // Add flicker only if torch is "on"
         if (isOn)
         {
             AnimateFlame();
@@ -48,12 +65,13 @@ public class TorchLight : MonoBehaviour
     {
         if (torchLight == null) return;
 
-        // Use Perlin noise for a more natural, radiating glow effect
-        float noise = Mathf.PerlinNoise(Time.time * intensitySpeed, noiseSeed);
+        // Use same noise for both intensity and radius for synchronized flicker
+        float noise = Mathf.PerlinNoise(Time.time * flickerSpeed, noiseSeed);
+        float intensityFlicker = Mathf.Lerp(-intensityVariation, intensityVariation, noise);
+        float radiusFlicker = Mathf.Lerp(-radiusVariation, radiusVariation, noise);
 
-        // Remap the noise value from 0-1 to a range around the base intensity
-        // This ensures the light never turns completely off
-        torchLight.intensity = Mathf.Lerp(intensityBase - intensityVariation, intensityBase + intensityVariation, noise);
+        targetIntensity = intensityBase + intensityFlicker;
+        targetRadius = radiusBase + radiusFlicker;
     }
 
     public void ToggleTorch()
@@ -64,17 +82,37 @@ public class TorchLight : MonoBehaviour
 
     private void UpdateTorchState()
     {
-        if (torchLight != null)
-            torchLight.enabled = isOn;
-
         if (animator != null)
         {
-            // Use a boolean parameter in the Animator for cleaner state management
-            // instead of calling Play directly. But this works too.
             if (isOn)
                 animator.Play("TorchFlameOn");
             else
                 animator.Play("TorchFlameOff");
         }
+
+        if (!isOn)
+        {
+            // Fade to 0 when turning off
+            targetIntensity = 0f;
+            targetRadius = 0f;
+        }
+        else
+        {
+            // Set starting targets when turning on (AnimateFlame will modulate further)
+            targetIntensity = intensityBase;
+            targetRadius = radiusBase;
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
+            playerInRange = true;
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
+            playerInRange = false;
     }
 }
