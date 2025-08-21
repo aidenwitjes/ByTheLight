@@ -1,12 +1,16 @@
 using UnityEngine;
 using UnityEngine.Rendering.Universal; // Needed for Light2D
 
-public class TorchLight : MonoBehaviour
+public class FireLight : MonoBehaviour
 {
-    [Header("Torch State")]
+    [Header("Fire State")]
     [SerializeField] private bool isOn = false;
-    [SerializeField] private Light2D torchLight;
+    [SerializeField] private Light2D fireLight;
     [SerializeField] private Animator animator;
+
+    [Header("Fire Animation States")]
+    [SerializeField] private AnimationClip onAnimationClip;
+    [SerializeField] private AnimationClip offAnimationClip;
 
     [Header("Flame Flicker Settings")]
     [SerializeField] private float intensityBase = 1f;
@@ -28,33 +32,35 @@ public class TorchLight : MonoBehaviour
     private float targetIntensity = 0f;
     private float targetRadius = 0f;
 
+    // Public property for other components to check fire state
+    public bool IsOn => isOn;
+
     private void Awake()
     {
-        if (torchLight == null)
-            torchLight = GetComponentInChildren<Light2D>();
+        if (fireLight == null)
+            fireLight = GetComponentInChildren<Light2D>();
         if (animator == null)
             animator = GetComponent<Animator>();
-
         noiseSeed = Random.Range(0f, 100f);
-        UpdateTorchState();
+        UpdateFireState();
     }
 
     private void Update()
     {
         if (playerInRange && Input.GetKeyDown(interactKey))
         {
-            ToggleTorch();
+            ToggleFire();
         }
 
         // Linear fade toward target values
-        if (torchLight != null)
+        if (fireLight != null)
         {
             // Linear interpolation for consistent speed
-            torchLight.intensity = Mathf.MoveTowards(torchLight.intensity, targetIntensity, Time.deltaTime * fadeSpeed);
-            torchLight.pointLightOuterRadius = Mathf.MoveTowards(torchLight.pointLightOuterRadius, targetRadius, Time.deltaTime * fadeSpeed);
+            fireLight.intensity = Mathf.MoveTowards(fireLight.intensity, targetIntensity, Time.deltaTime * fadeSpeed);
+            fireLight.pointLightOuterRadius = Mathf.MoveTowards(fireLight.pointLightOuterRadius, targetRadius, Time.deltaTime * fadeSpeed);
         }
 
-        // Add flicker only if torch is "on"
+        // Add flicker only if fire is "on"
         if (isOn)
         {
             AnimateFlame();
@@ -63,7 +69,7 @@ public class TorchLight : MonoBehaviour
 
     private void AnimateFlame()
     {
-        if (torchLight == null) return;
+        if (fireLight == null) return;
 
         // Use same noise for both intensity and radius for synchronized flicker
         float noise = Mathf.PerlinNoise(Time.time * flickerSpeed, noiseSeed);
@@ -74,20 +80,50 @@ public class TorchLight : MonoBehaviour
         targetRadius = radiusBase + radiusFlicker;
     }
 
-    public void ToggleTorch()
+    public void ToggleFire()
     {
         isOn = !isOn;
-        UpdateTorchState();
+        UpdateFireState();
     }
 
-    private void UpdateTorchState()
+    // Public method for other components to light the fire
+    public void LightFire()
+    {
+        if (!isOn)
+        {
+            isOn = true;
+            UpdateFireState();
+        }
+    }
+
+    // Public method for other components to extinguish the fire
+    public void ExtinguishFire()
+    {
+        if (isOn)
+        {
+            isOn = false;
+            UpdateFireState();
+        }
+    }
+
+    // Public method to set fire state directly
+    public void SetFireState(bool state)
+    {
+        if (isOn != state)
+        {
+            isOn = state;
+            UpdateFireState();
+        }
+    }
+
+    private void UpdateFireState()
     {
         if (animator != null)
         {
-            if (isOn)
-                animator.Play("TorchFlameOn");
-            else
-                animator.Play("TorchFlameOff");
+            if (isOn && onAnimationClip != null)
+                animator.Play(onAnimationClip.name);
+            else if (!isOn && offAnimationClip != null)
+                animator.Play(offAnimationClip.name);
         }
 
         if (!isOn)
@@ -114,5 +150,17 @@ public class TorchLight : MonoBehaviour
     {
         if (other.CompareTag("Player"))
             playerInRange = false;
+    }
+
+    // Optional: Method to get current light intensity (useful for other systems)
+    public float GetCurrentIntensity()
+    {
+        return fireLight != null ? fireLight.intensity : 0f;
+    }
+
+    // Optional: Method to get current light radius (useful for other systems)
+    public float GetCurrentRadius()
+    {
+        return fireLight != null ? fireLight.pointLightOuterRadius : 0f;
     }
 }
