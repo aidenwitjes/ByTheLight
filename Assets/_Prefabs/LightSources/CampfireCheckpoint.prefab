@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 2698848757554671169}
   - component: {fileID: 5519807058039296274}
   - component: {fileID: -7790932469338590502}
-  - component: {fileID: 3082252698312990470}
   m_Layer: 0
   m_Name: CampfireCheckpoint
   m_TagString: Untagged
@@ -35,6 +34,7 @@ Transform:
   - {fileID: 1020757619895897523}
   - {fileID: 2175914393181028153}
   - {fileID: 4074342929772132265}
+  - {fileID: 3828344652360499182}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5519807058039296274
@@ -50,17 +50,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isOn: 0
-  fireLight: {fileID: 6765678696457912935}
-  animator: {fileID: 8846478369061006778}
+  light2D: {fileID: 6765678696457912935}
+  animator: {fileID: 2044381165830020064}
   onAnimationClip: {fileID: 7400000, guid: 9d1a8628564356c4b9b5fa017d353f16, type: 2}
   offAnimationClip: {fileID: 7400000, guid: b9de5cc5d5b315c4c870ef8941cfcf51, type: 2}
   intensityBase: 2
-  intensityVariation: 0.3
-  flickerSpeed: 1
   radiusBase: 8
-  radiusVariation: 0.5
   fadeSpeed: 5
-  interactKey: 101
+  requiresMatchbox: 1
+  requirementMessage: Need a matchbox to light this fire
+  intensityVariation: 0.3
+  radiusVariation: 0.5
+  flickerSpeed: 1
 --- !u!114 &-7790932469338590502
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -87,52 +88,6 @@ MonoBehaviour:
   OnCheckpointUsed:
     m_PersistentCalls:
       m_Calls: []
---- !u!61 &3082252698312990470
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 820776886034077337}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0.06}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Size: {x: 0.75, y: 0.5}
-  m_EdgeRadius: 0
 --- !u!1 &857237219410079175
 GameObject:
   m_ObjectHideFlags: 0
@@ -143,7 +98,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4074342929772132265}
   - component: {fileID: 7590468586312489550}
-  - component: {fileID: 8846478369061006778}
+  - component: {fileID: 2044381165830020064}
   m_Layer: 0
   m_Name: CampfireFlame
   m_TagString: Untagged
@@ -160,7 +115,7 @@ Transform:
   m_GameObject: {fileID: 857237219410079175}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.275, z: 0}
+  m_LocalPosition: {x: 0, y: 0.275, z: -0.05}
   m_LocalScale: {x: 0.75, y: 0.75, z: 0.75}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -222,7 +177,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!95 &8846478369061006778
+--- !u!95 &2044381165830020064
 Animator:
   serializedVersion: 7
   m_ObjectHideFlags: 0
@@ -244,6 +199,98 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!1 &912915220215215859
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3828344652360499182}
+  - component: {fileID: 3570482739249006140}
+  - component: {fileID: 284855398717889952}
+  m_Layer: 0
+  m_Name: InteractionZone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3828344652360499182
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 912915220215215859}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2698848757554671169}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!61 &3570482739249006140
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 912915220215215859}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0.06}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 0.75, y: 0.5}
+  m_EdgeRadius: 0
+--- !u!114 &284855398717889952
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 912915220215215859}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 549dbdc26154d5a4b930af8ad28c8ff5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetObject: {fileID: 912915220215215859}
 --- !u!1 &3401855748608941190
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,8 +1,13 @@
+// Flashlight that requires the actual flashlight item to use
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
-public class FlashlightController : MonoBehaviour
+public class FlashlightController : MonoBehaviour, IRequirementInteractable
 {
+    [Header("Flashlight Requirements")]
+    [SerializeField] private bool requiresFlashlight = true;
+    [SerializeField] private string requirementMessage = "Need to find a flashlight first";
+
     [Header("Flashlight References")]
     public Transform flashlightTransform;
     public SpriteRenderer playerSprite;
@@ -10,7 +15,7 @@ public class FlashlightController : MonoBehaviour
     public GameObject flashlightSprite;
 
     [Header("Flashlight Settings")]
-    public bool isFlashlightOn = true;
+    public bool isFlashlightOn = false; // Start off since we need the item first
     public KeyCode toggleKey = KeyCode.F;
 
     [Header("Upgrades")]
@@ -30,16 +35,16 @@ public class FlashlightController : MonoBehaviour
     public float bulbFalloff = 0.9f;
 
     [Header("Lens Adjustment Settings")]
-    public float scrollSensitivity = 0.05f; // smaller = slower adjustments
-    private float lensT = 0.5f; // 0 = focused, 1 = wide
+    public float scrollSensitivity = 0.05f;
+    private float lensT = 0.5f;
 
-    [Header("Lens Focused Modifiers (added/subtracted from base)")]
+    [Header("Lens Focused Modifiers")]
     public float focusIntensityAdd = 0.4f;
     public float focusRadiusAdd = 2f;
     public float focusInnerAngle = 15f;
     public float focusOuterAngle = 35f;
 
-    [Header("Lens Wide Modifiers (added/subtracted from base)")]
+    [Header("Lens Wide Modifiers")]
     public float wideIntensitySub = 0.3f;
     public float wideRadiusSub = 2f;
     public float wideInnerAngle = 55f;
@@ -50,12 +55,17 @@ public class FlashlightController : MonoBehaviour
     public AudioClip toggleOnSound;
     public AudioClip toggleOffSound;
 
+    [Header("Interaction")]
+    private bool playerInRange = false;
+
     private bool lastFrameFlashlightState;
     private bool lastHasAdjustableLens;
     private bool lastHasAdvancedBulb;
+    private bool hasFlashlightItem = false;
 
     void Start()
     {
+        CheckForFlashlightItem();
         ApplyFlashlightSettings();
         lastFrameFlashlightState = isFlashlightOn;
         lastHasAdjustableLens = hasAdjustableLens;
@@ -64,17 +74,34 @@ public class FlashlightController : MonoBehaviour
 
     void Update()
     {
-        HandleFlashlightToggle();
-        CheckForUpgradeChanges();
+        // Check if player has flashlight item
+        CheckForFlashlightItem();
 
-        if (isFlashlightOn)
+        // Only allow flashlight usage if player has the item
+        if (hasFlashlightItem)
         {
-            HandleFlashlightAiming();
-            HandlePlayerFlipping();
+            HandleFlashlightToggle();
 
-            if (hasAdjustableLens)
-                HandleLensAdjustment();
+            if (isFlashlightOn)
+            {
+                HandleFlashlightAiming();
+                HandlePlayerFlipping();
+
+                if (hasAdjustableLens)
+                    HandleLensAdjustment();
+            }
         }
+        else
+        {
+            // Force flashlight off if player doesn't have item
+            if (isFlashlightOn)
+            {
+                isFlashlightOn = false;
+                UpdateFlashlightVisuals();
+            }
+        }
+
+        CheckForUpgradeChanges();
 
         if (lastFrameFlashlightState != isFlashlightOn)
         {
@@ -84,9 +111,63 @@ public class FlashlightController : MonoBehaviour
         }
     }
 
+    private void CheckForFlashlightItem()
+    {
+        if (PlayerInventory.Instance != null)
+        {
+            hasFlashlightItem = PlayerInventory.Instance.HasItem("Flashlight");
+        }
+    }
+
+    // IRequirementInteractable implementation
+    public bool CanInteract()
+    {
+        if (requiresFlashlight)
+        {
+            return PlayerInventory.Instance?.HasItem("Flashlight") ?? false;
+        }
+        return true;
+    }
+
+    public string GetRequirementMessage()
+    {
+        return requirementMessage;
+    }
+
+    public void Interact()
+    {
+        if (CanInteract())
+        {
+            ToggleFlashlight();
+        }
+        else
+        {
+            Debug.Log(GetRequirementMessage());
+            // You could show UI message here instead
+        }
+    }
+
+    public void SetPlayerInRange(bool inRange)
+    {
+        playerInRange = inRange;
+    }
+
+    // Public method to toggle flashlight (can be called externally)
+    public void ToggleFlashlight()
+    {
+        if (hasFlashlightItem)
+        {
+            isFlashlightOn = !isFlashlightOn;
+        }
+        else
+        {
+            Debug.Log(GetRequirementMessage()); // Add this!
+                                                // Or trigger UI notification here
+        }
+    }
+
     private void CheckForUpgradeChanges()
     {
-        // Check if upgrade booleans have changed
         if (lastHasAdjustableLens != hasAdjustableLens || lastHasAdvancedBulb != hasAdvancedBulb)
         {
             ApplyFlashlightSettings();
@@ -98,7 +179,7 @@ public class FlashlightController : MonoBehaviour
     private void HandleFlashlightToggle()
     {
         if (Input.GetKeyDown(toggleKey))
-            isFlashlightOn = !isFlashlightOn;
+            ToggleFlashlight();
     }
 
     private void HandleFlashlightAiming()
@@ -187,7 +268,6 @@ public class FlashlightController : MonoBehaviour
         }
     }
 
-    // Optional: Force update settings when values change in inspector during play mode
     void OnValidate()
     {
         if (Application.isPlaying && flashlightLight != null)
