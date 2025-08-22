@@ -75,8 +75,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -935579953
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: 3325885465304735478, guid: 49f37fff549c23a44a4dd40014987a71, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -163,7 +163,7 @@ MonoBehaviour:
   m_Intensity: 0
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
-  m_ApplyToSortingLayers: 00000000
+  m_ApplyToSortingLayers: 000000001b066200cf2e3cc8ffaf591ccdf2813c
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -173,9 +173,9 @@ MonoBehaviour:
   m_NormalMapQuality: 2
   m_UseNormalMap: 0
   m_ShadowsEnabled: 1
-  m_ShadowIntensity: 1
-  m_ShadowSoftness: 1
-  m_ShadowSoftnessFalloffIntensity: 0
+  m_ShadowIntensity: 0.95
+  m_ShadowSoftness: 0.5
+  m_ShadowSoftnessFalloffIntensity: 0.5
   m_ShadowVolumeIntensityEnabled: 0
   m_ShadowVolumeIntensity: 0.75
   m_LocalBounds:
@@ -302,8 +302,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -935579953
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: -1849582045, guid: 49f37fff549c23a44a4dd40014987a71, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -389,8 +389,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -935579953
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: 6914486449696852669, guid: 49f37fff549c23a44a4dd40014987a71, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -568,8 +568,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -935579953
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: -8472088281656665103, guid: 49f37fff549c23a44a4dd40014987a71, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

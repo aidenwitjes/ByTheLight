@@ -41,5 +41,20 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Background
+    uniqueID: 6424091
+    locked: 0
+  - name: Shadow_Walls
+    uniqueID: 3507174433
+    locked: 0
+  - name: Midground_Objects
+    uniqueID: 3359387343
+    locked: 0
+  - name: Player
+    uniqueID: 475639807
+    locked: 0
+  - name: Foreground_Effects
+    uniqueID: 1015149261
+    locked: 0
   m_RenderingLayers:
   - Default
