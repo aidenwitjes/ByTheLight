@@ -1,5 +1,6 @@
-// FireLight with flickering effect and matchbox requirement
+// FireLight with flickering effect, matchbox requirement, and lifetime feature
 using UnityEngine;
+using System.Collections;
 
 public class FireLight : BaseLight, IRequirementInteractable
 {
@@ -12,7 +13,12 @@ public class FireLight : BaseLight, IRequirementInteractable
     [SerializeField] private float radiusVariation = 0.5f;
     [SerializeField] private float flickerSpeed = 2f;
 
+    [Header("Lifetime Settings")]
+    [SerializeField] private bool hasLifetime = false;
+    [SerializeField] private float lifetimeDuration = 60f; // Duration in seconds
+
     private float noiseSeed;
+    private Coroutine lifetimeCoroutine;
 
     protected override void Awake()
     {
@@ -39,7 +45,21 @@ public class FireLight : BaseLight, IRequirementInteractable
     {
         if (CanInteract())
         {
+            bool wasOn = isOn;
             base.Interact();
+
+            // Handle lifetime logic
+            if (isOn && !wasOn && hasLifetime)
+            {
+                // Fire was just lit, start lifetime countdown
+                StartLifetimeCountdown();
+            }
+            else if (!isOn && lifetimeCoroutine != null)
+            {
+                // Fire was manually extinguished, stop countdown
+                StopCoroutine(lifetimeCoroutine);
+                lifetimeCoroutine = null;
+            }
         }
         else
         {
@@ -47,6 +67,50 @@ public class FireLight : BaseLight, IRequirementInteractable
             // This could be handled by a UI system or notification system
             Debug.Log(GetRequirementMessage());
             // You might want to trigger a UI popup or sound effect here
+        }
+    }
+
+    private void StartLifetimeCountdown()
+    {
+        if (lifetimeCoroutine != null)
+        {
+            StopCoroutine(lifetimeCoroutine);
+        }
+        lifetimeCoroutine = StartCoroutine(LifetimeCountdown());
+    }
+
+    private IEnumerator LifetimeCountdown()
+    {
+        yield return new WaitForSeconds(lifetimeDuration);
+
+        // Automatically extinguish the fire as if manually interacted with
+        if (isOn)
+        {
+            isOn = false;
+            UpdateLightState();
+            lifetimeCoroutine = null;
+        }
+    }
+
+    // Public method to disable lifetime (used by puzzle system)
+    public void DisableLifetime()
+    {
+        hasLifetime = false;
+        if (lifetimeCoroutine != null)
+        {
+            StopCoroutine(lifetimeCoroutine);
+            lifetimeCoroutine = null;
+        }
+    }
+
+    // Public method to re-enable lifetime
+    public void EnableLifetime(float duration)
+    {
+        hasLifetime = true;
+        lifetimeDuration = duration;
+        if (isOn)
+        {
+            StartLifetimeCountdown();
         }
     }
 
@@ -69,5 +133,15 @@ public class FireLight : BaseLight, IRequirementInteractable
 
         targetIntensity = intensityBase + intensityFlicker;
         targetRadius = radiusBase + radiusFlicker;
+    }
+
+    private void OnDisable()
+    {
+        // Clean up coroutine if the object is disabled
+        if (lifetimeCoroutine != null)
+        {
+            StopCoroutine(lifetimeCoroutine);
+            lifetimeCoroutine = null;
+        }
     }
 }

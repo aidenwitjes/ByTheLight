@@ -147,6 +147,8 @@ MonoBehaviour:
   intensityVariation: 0.2
   radiusVariation: 0.5
   flickerSpeed: 1
+  hasLifetime: 0
+  lifetimeDuration: 60
 --- !u!1 &3159635868023051283
 GameObject:
   m_ObjectHideFlags: 0
@@ -399,7 +401,7 @@ MonoBehaviour:
   m_BlendStyleIndex: 0
   m_FalloffIntensity: 0.8
   m_Color: {r: 0.9960785, g: 0.45882356, b: 0.1137255, a: 1}
-  m_Intensity: 1.5
+  m_Intensity: 0
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
   m_ApplyToSortingLayers: 00000000
@@ -423,7 +425,7 @@ MonoBehaviour:
   m_PointLightInnerAngle: 360.00006
   m_PointLightOuterAngle: 360.00006
   m_PointLightInnerRadius: 0
-  m_PointLightOuterRadius: 6
+  m_PointLightOuterRadius: 0
   m_ShapeLightParametricSides: 5
   m_ShapeLightParametricAngleOffset: 0
   m_ShapeLightParametricRadius: 1
